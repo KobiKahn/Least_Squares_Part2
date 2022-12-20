@@ -80,14 +80,39 @@ def comp_residual(x, y, x2_c, x_c, c_c):
 x = np.array([-1.0,0.0,1.0,2.0,3.0,4.0,5.0,6.0])
 y = np.array([10.0,6.0,2.0,1.0,0.0,2.0,4.0,7.0])
 
-x2_coeff, x_coeff, con_coeff = regression_equ(x, y, False)
+part_a = False
+if part_a:
+    x2_coeff, x_coeff, con_coeff = regression_equ(x, y, False)
+    r_list, r_mean, r_std = comp_residual(x, y, x2_coeff, x_coeff, con_coeff)
+    scatter_quadratic(x, y, x2_coeff, x_coeff, con_coeff, 2, r_std, 'QUADRATIC GRAPH')
 
-r_list, r_mean, r_std = comp_residual(x, y, x2_coeff, x_coeff, con_coeff)
+############################### PART B ###########################################
 
-scatter_quadratic(x, y, x2_coeff, x_coeff, con_coeff, 2, r_std, 'QUADRATIC GRAPH')
+def multi_linear_regression(x1, x2, y):
+    x1_squared = x1 ** 2
+    x2_squared = x2**2
+    x1y = x1 * y
+    x2y = y * x2
+    x1x2 = x1*x2
+    N = len(x1)
+    ans_list = []
+    left_matrix = [[sum(x1_squared), sum(x1x2), sum(x1)], [sum(x1x2), sum(x2_squared), sum(x2)], [sum(x1), sum(x2), N]]
+    right_matrix = [[sum(x1y)], [sum(x2y)], [sum(y)]]
+    inv_mat_left = np.linalg.inv(left_matrix)
+    solution = np.dot(inv_mat_left, right_matrix)
+    x1_coeff, x2_coeff, con_coeff = solution[0], solution[1], solution[2]
 
+    for i in range(N):
+        ans_list.append(sum( (y[i] - (x1_coeff*x1[i] + x2_coeff*x2[i] + con_coeff))**2))
 
+    return(ans_list)
 
+x1_list = np.array([-1.2, 0.2 ,1.0, 2.5, 4.0, 5.6])
+x2_list = np.array([-2.3, 1.0 ,3.5, 4.1, 7.4, 6.1])
+y_list = np.array([-6.0, 9.0 ,20.0, 27.0, 45.0, 44.0])
 
-
+multi_ans = multi_linear_regression(x1_list, x2_list, y_list)
+part_b = True
+if part_b:
+    print(multi_ans)
 
